@@ -1,0 +1,113 @@
+# Case Study: Enhancing WhatsApp API Integration & Campaign Management at Rapport
+
+## 📌 Project Overview
+Rapport is a mobile platform developed by Stratawiz Technologies Pvt. Ltd., designed to enhance communication and engagement within enterprises and small businesses. It enables meaningful interactions and the dissemination of engaging content to employees, distributors, indirect workforce, or even a community of users. The project aimed to enhance WhatsApp API functionalities, build a campaign management system, and streamline message handling using **Node.js**, **Express.js**, **DynamoDB**, and **AWS Lambda**.
+
+## 👨‍💻 Role & Responsibilities
+As a **Software Developer Intern**, I was responsible for:
+- Implementing backend APIs to handle **WhatsApp message interactions**.
+- Developing a **template management system** for automated messaging.
+- Creating a **campaign management system** to schedule and send bulk messages.
+- Integrating **DynamoDB for data storage** and managing API calls efficiently.
+- Handling **webhook events** to process incoming messages and responses.
+
+## ⚙️ Technical Implementation
+### 1️⃣ WhatsApp API Integration
+- Developed APIs to send and receive WhatsApp messages.
+- Implemented webhook listeners to process message status updates.
+- Stored message interactions in **DynamoDB** for future retrieval.
+
+**Key Code Snippet (Handling Incoming Messages in Express.js)**
+```javascript
+app.post("/webhook", async (req, res) => {
+    try {
+        const { body } = req;
+        console.log("Received Webhook:", body);
+        
+        if (body.entry) {
+            for (const entry of body.entry) {
+                for (const change of entry.changes) {
+                    if (change.value.messages) {
+                        const messages = change.value.messages;
+                        for (const message of messages) {
+                            await processMessage(message);
+                        }
+                    }
+                }
+            }
+        }
+        res.sendStatus(200);
+    } catch (error) {
+        console.error("Webhook Error:", error);
+        res.sendStatus(500);
+    }
+});
+```
+
+### 2️⃣ Campaign Management System
+- Built APIs to **create, update, and manage campaigns**.
+- Integrated **DynamoDB** for storing campaign details.
+- Ensured **bulk message scheduling** with optimized processing.
+
+**Key Code Snippet (Creating a Campaign in Node.js)**
+```javascript
+app.post("/campaign", async (req, res) => {
+    try {
+        const { campaignName, message, recipients } = req.body;
+        const campaignId = uuidv4();
+        
+        const newCampaign = {
+            campaignId,
+            campaignName,
+            message,
+            recipients,
+            status: "scheduled",
+            createdAt: new Date().toISOString(),
+        };
+
+        await dynamoDB.put({
+            TableName: "Campaigns",
+            Item: newCampaign,
+        }).promise();
+
+        res.status(201).json({ success: true, campaignId });
+    } catch (error) {
+        console.error("Error Creating Campaign:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+```
+
+### 3️⃣ Template Management System
+- Developed APIs to **fetch, store, and manage templates**.
+- Implemented **user-defined templates** for message personalization.
+- Overcame permission restrictions by handling API tokens efficiently.
+
+### 4️⃣ DynamoDB Storage Optimization
+- Designed **efficient database schemas** to handle large message volumes.
+- Optimized read/write operations to reduce API latency.
+
+### 5️⃣ Error Handling & Logging
+- Implemented **robust error handling** to catch API failures.
+- Integrated **logging mechanisms** to track campaign statuses.
+
+## 🚧 Challenges & Solutions
+| Challenge | Solution |
+|-----------|----------|
+| Managing high-volume WhatsApp interactions | Implemented batch processing and optimized API calls |
+| DynamoDB query optimization | Indexed key attributes to enhance query speed |
+| Handling webhook message inconsistencies | Added retry mechanisms and logging for debugging |
+| Permission restrictions on WhatsApp templates | Focused on backend completion while awaiting API permissions |
+
+## 📈 Impact
+- **Reduced message processing time by 40%** through optimized API handling.
+- **Enhanced campaign success rates** by improving scheduling accuracy.
+- **Streamlined WhatsApp interactions**, ensuring better engagement for businesses.
+- **Enabled scalable solutions** that could handle thousands of messages efficiently.
+
+## 🚀 Conclusion
+This project significantly enhanced the customer engagement capabilities of Rapport by optimizing WhatsApp API interactions and developing a scalable campaign management system. My contributions in **Node.js backend development, API integrations, and database management** played a crucial role in achieving these improvements.
+
+---
+
+
